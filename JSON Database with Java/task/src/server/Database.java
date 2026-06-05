@@ -19,14 +19,14 @@ public class Database {
     }
 
     public String get(int index) {
-        if (index < 0 || index > dbsArr.length || dbsArr[index].isEmpty()) {
+        if (index < 0 || index >= dbsArr.length || dbsArr[index].isEmpty()) {
             return "ERROR";
         }
         return dbsArr[index];
     }
 
     public String delete(int index) {
-        if (index <0 || index > dbsArr.length) {
+        if (index <0 || index >= dbsArr.length) {
             return "ERROR";
         }
         if (!dbsArr[index].isEmpty()) {
@@ -34,6 +34,9 @@ public class Database {
         }
         return "OK";
     }
+
+
+
 
     public void exit() {
         System.exit(0);
