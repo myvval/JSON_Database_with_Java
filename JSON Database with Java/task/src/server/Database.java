@@ -10,8 +10,12 @@ public class Database {
         Arrays.fill(dbsArr, "");
     }
 
+    private boolean isIndexValid(int index) {
+        return index >= 0 && index < dbsArr.length;
+    }
+
     public String set(int index, String text) {
-        if (index < 0 || index >= dbsArr.length) {
+        if (!isIndexValid(index)) {
             return "ERROR";
         }
         dbsArr[index] = text;
@@ -19,19 +23,17 @@ public class Database {
     }
 
     public String get(int index) {
-        if (index < 0 || index >= dbsArr.length || dbsArr[index].isEmpty()) {
+        if (!isIndexValid(index) || dbsArr[index].isEmpty()) {
             return "ERROR";
         }
         return dbsArr[index];
     }
 
     public String delete(int index) {
-        if (index <0 || index >= dbsArr.length) {
+        if (!isIndexValid(index)) {
             return "ERROR";
         }
-        if (!dbsArr[index].isEmpty()) {
-            dbsArr[index] = "";
-        }
+        dbsArr[index] = "";
         return "OK";
     }
 
