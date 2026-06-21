@@ -1,12 +1,50 @@
 package server;
 
-import java.security.cert.TrustAnchor;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Database db = new Database();
+        String address = "127.0.0.1";
+        int port = 2044;
+        System.out.println("Server started!");
+
+
+        try (ServerSocket server = new ServerSocket(port,50, InetAddress.getByName(address))) {
+            Socket socket = server.accept();
+            DataInputStream input = new DataInputStream(socket.getInputStream());
+            DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+            String dataFromClient = input.readUTF();
+            String stringText = "A record # 12 was sent!";
+
+            System.out.println("Received: "+dataFromClient);
+            System.out.println("Sent: A record # 12 was sent!");
+            output.writeUTF(stringText);
+
+
+        } catch (UnknownHostException e) {
+            System.err.println("Count not resolve host connection:" + address);
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("I/O error occured during connection to " +address +"on port"+port);
+            e.printStackTrace();
+        }
+
+
+
+
+
+
+
+
+        /*Database db = new Database();
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
@@ -30,7 +68,7 @@ public class Main {
 
 
 
-        }
+        }*/
 
 
     }
