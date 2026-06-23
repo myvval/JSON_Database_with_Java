@@ -11,7 +11,7 @@ public class Database {
     }
 
     private boolean isIndexValid(int index) {
-        return index >= 0 && index < dbsArr.length;
+        return index > 0 && index < dbsArr.length;
     }
 
     public String set(int index, String text) {

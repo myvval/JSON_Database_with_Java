@@ -1,31 +1,62 @@
 package client;
 
+import com.google.gson.Gson;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
+
 import java.net.InetAddress;
 import java.net.Socket;
+
+import com.beust.jcommander.JCommander;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import java.io.IOException;
 import java.net.UnknownHostException;
-//import java.util.logging.*;
-
-
+import com.beust.jcommander.ParameterException;
 
 
 public class Main {
     public static void main(String[] args) {
         String address = "127.0.0.1";
-        int port = 2044;
+        int port = 23456;
+
+
+
+        AppConfig config = new AppConfig();
+        try {
+            JCommander.newBuilder()
+                    .addObject(config)
+                    .build()
+                    .parse(args);
+        } catch (ParameterException e) {
+            System.out.println("Parameter expection occured:" + e.getMessage());
+            return;
+        }
+
+
 
         try (Socket socket = new Socket(InetAddress.getByName(address), port)) {
-            DataInputStream input = new DataInputStream(socket.getInputStream());
-            DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+            ClientHandler handleClient = new ClientHandler(socket);
 
-            String data = "Give me a record # 12";
-            System.out.println("Client started!");
-            output.writeUTF(data);
-            System.out.println("Sent:"+data);
-            System.out.println("Received: "+input.readUTF());
+            DataInputStream input = handleClient.getInputStream();
+            DataOutputStream output = handleClient.getOutputStream();
 
+            Map<String,String> map = new HashMap<>();
+            map.put("type",config.getType());
+            map.put("index",String.valueOf(config.getIndex()));
+            map.put("message",config.getMessage());
+
+            if (map.get("type") == null) {
+                System.out.printf("Sent: %s%n",map.get("type"));
+            } else if (map.get("message").equals("default")) {
+                System.out.printf("Sent: %s %s%n", map.get("type"),map.get("index"));
+            } else {
+                System.out.printf("Sent: %s %s %s%n",map.get("type"),map.get("index"),map.get("message"));
+            }
+            output.writeUTF(new Gson().toJson(map));
+            System.out.println("Received: " + input.readUTF());
 
 
         } catch (UnknownHostException e) {
